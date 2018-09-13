@@ -1,0 +1,32 @@
+/* EBNF for the "h" language.
+ *
+ * The grammar can be viewed using the Railroad Diagram Generator at
+ * http://www.bottlecaps.de/rr/ui.
+ *
+ * See Tutorial.aspx.html for a reference.
+ *
+ * Author: Dwayne Crooks
+ * Email: me@dwaynecrooks.com
+ */
+
+H     ::= PDef* Stmt+ EOF
+
+PDef  ::= PName ('(' Param (',' Param)* ')')? ':' (Stmt | Param)* EOL
+
+Stmt  ::= 's' | 'r' | 'l' | PName ('(' Arg (',' Arg)* ')')?
+Arg   ::= Expr | Stmt+
+
+Expr  ::= '-'? Val (('+' | '-') Val)*
+Val   ::= Num | Param
+
+Num   ::= Digit+
+Digit ::= '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
+
+PName ::= 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'g' | 'h'
+        | 'i' | 'j' | 'k' | 'm' | 'n' | 'o' | 'p' | 'q'
+        | 't' | 'u' | 'v' | 'w' | 'x' | 'y' | 'z'
+
+Param ::= 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H'
+        | 'I' | 'J' | 'K' | 'L' | 'M' | 'N' | 'O' | 'P'
+        | 'Q' | 'R' | 'S' | 'T' | 'U' | 'V' | 'W' | 'X'
+        | 'Y' | 'Z'
