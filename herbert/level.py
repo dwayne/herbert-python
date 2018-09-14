@@ -69,6 +69,19 @@ class Level:
         self.ncols = ncols
         self._parse(field)
 
+    def __call__(self):
+        white_buttons = {}
+        for r, c in self.white_buttons:
+            white_buttons[(r, c)] = WhiteButton(r, c)
+
+        gray_buttons = {}
+        for r, c in self.gray_buttons:
+            gray_buttons[(r, c)] = GrayButton(r, c, white_buttons.values())
+
+        robot = Robot(*self.robot)
+
+        return RuntimeEnvironment(self, robot, gray_buttons, white_buttons)
+
     def _parse(self, field):
         # Step 1: Convert the field to a grid
         grid = []
@@ -182,3 +195,106 @@ class VWall(Wall):
     def __iter__(self):
         for i in range(self.extent + 1):
             yield (self.row + i, self.col)
+
+
+class Robot:
+    MOVEMENT_DELTAS = (
+        (-1, 0),    # up
+        (0, 1),     # right
+        (1, 0),     # down
+        (0, -1)     # left
+    )
+
+    def __init__(self, row, col, direction):
+        self.row = row
+        self.col = col
+        self.heading = ROBOT_DIRECTIONS.index(direction)
+        self.trail = [(row, col)]
+
+    def isup(self):
+        return self.heading == 0
+
+    def isright(self):
+        return self.heading == 1
+
+    def isdown(self):
+        return self.heading == 2
+
+    def isleft(self):
+        return self.heading == 3
+
+    def turn_left(self):
+        self.heading = (self.heading - 1) % 4
+
+    def turn_right(self):
+        self.heading = (self.heading + 1) % 4
+
+    def position_after_move(self):
+        dr, dc = self.MOVEMENT_DELTAS[self.heading]
+
+        return (self.row + dr, self.col + dc)
+
+    def move_to(self, row, col):
+        self.row = row
+        self.col = col
+        self.trail.append((row, col))
+
+
+class GrayButton:
+    def __init__(self, row, col, white_buttons):
+        self.row = row
+        self.col = col
+        self.white_buttons = white_buttons
+
+    def press(self):
+        for white_button in self.white_buttons:
+            white_button.unpress()
+
+
+class WhiteButton:
+    def __init__(self, row, col):
+        self.row = row
+        self.col = col
+        self.pressed = False
+
+    def press(self):
+        self.pressed = True
+
+    def unpress(self):
+        self.pressed = False
+
+
+class RuntimeEnvironment:
+    def __init__(self, level, robot, gray_buttons, white_buttons):
+        self.level = level
+        self.robot = robot
+        self.gray_buttons = gray_buttons
+        self.white_buttons = white_buttons
+        self.npressed = 0       # the number of white buttons pressed
+        self.max_npressed = 0   # the maximum number of white buttons pressed
+        self.completed = False  # True iff all the white buttons have been pressed
+
+    def step(self, command):
+        if command == 's':
+            row, col = pos = self.robot.position_after_move()
+
+            if 0 <= row < self.level.nrows and 0 <= col < self.level.ncols and pos not in self.level.inaccessible_spots:
+                self.robot.move_to(row, col)
+
+                if pos in self.gray_buttons:
+                    self.gray_buttons[pos].press()
+                    self.npressed = 0
+                elif pos in self.white_buttons:
+                    self.white_buttons[pos].press()
+                    self.npressed += 1
+                    if self.npressed > self.max_npressed:
+                        self.max_npressed = self.npressed
+
+                    if not self.completed and self.white_buttons and self.npressed == len(self.white_buttons):
+                        self.completed = True
+        elif command == 'l':
+            self.robot.turn_left()
+        elif command == 'r':
+            self.robot.turn_right()
+        else:
+            raise ValueError('not a command: %s' % command)
