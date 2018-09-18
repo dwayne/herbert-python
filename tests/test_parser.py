@@ -109,7 +109,7 @@ class ProcedureDefinitionsTestCase(unittest.TestCase):
         self.assertEqual(args.data, 'args')
         self.assertEqual(len(args.children), 6)
         self.assertEqual(args.children[0].data, 'sexpr')
-        self.assertEqual(args.children[1].data, 'sexpr')
+        self.assertEqual(args.children[1].data, 'var')
         self.assertEqual(args.children[2].data, 'expr')
         self.assertEqual(args.children[3].data, 'expr')
         self.assertEqual(args.children[4].data, 'expr')

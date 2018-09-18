@@ -17,7 +17,9 @@ GRAMMAR = """
            | PNAME [args] -> pcall
 
     args   : "(" arg ("," arg)* ")"
-    ?arg   : (stmt | PARAM)+ -> sexpr
+    ?arg   : PARAM -> var
+           | PARAM (stmt | PARAM)+ -> sexpr
+           | stmt (stmt | PARAM)* -> sexpr
            | expr
 
     expr   : NEG PARAM
