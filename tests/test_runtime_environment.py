@@ -12,6 +12,7 @@ class StepTestCase(unittest.TestCase):
         file.write('.*r.w.g.w.\n')
         file.write('.***......\n')
         file.write('..........\n')
+        file.write('50\n')
         file.write('11')
         file.seek(0)
 
@@ -131,3 +132,34 @@ class StepTestCase(unittest.TestCase):
         self.assertFalse(self.re.white_buttons[(2, 8)].pressed)
         self.assertEqual(self.re.max_npressed, 2)
         self.assertTrue(self.re.completed)
+
+
+class ScoreTestCase(unittest.TestCase):
+    def test_example1(self):
+        file = io.StringIO()
+        file.write('.r.wwwwwwwwwwwwwwwwwwww.\n')
+        file.write('100\n')
+        file.write('10\n')
+        file.seek(0)
+
+        level = Level.fromfile(file, nrows=1, ncols=24)
+        re = level()
+
+        for _ in range(25):
+            re.step('s')
+
+        # points = 100
+        # max_bytes = 10
+        # total_buttons = 20
+        # buttons = 20
+
+        # bytes = 10
+        self.assertEqual(re.score(10), 100)
+
+        # bytes = 5
+        self.assertEqual(re.score(5), 200)
+
+        # bytes = 15
+        self.assertEqual(re.score(15), 20)
+
+        file.close()

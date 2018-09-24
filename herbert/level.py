@@ -47,23 +47,13 @@ class Level:
 
         field = field[:-1]
 
-        line = file.readline(5)
-        if line.endswith('\n'):
-            line = line[:-1]
+        points = _readint(file, 7, cls.NUMBER_PATTERN, 1, 1000000, nrows + 1, newline=True)
+        max_bytes = _readint(file, 4, cls.NUMBER_PATTERN, 1, 1000, nrows + 2)
 
-        match = cls.NUMBER_PATTERN.fullmatch(line)
-        error = ValueError('expected a positive integer in the range [1, 1000) at line %d: %s' % (nrows + 1, line))
+        return cls(field, points, max_bytes, nrows, ncols)
 
-        if match:
-            max_bytes = int(line)
-            if max_bytes < 1 or max_bytes >= 1000:
-                raise error
-        else:
-            raise error
-
-        return cls(field, max_bytes, nrows, ncols)
-
-    def __init__(self, field, max_bytes, nrows, ncols):
+    def __init__(self, field, points, max_bytes, nrows, ncols):
+        self.points = points
         self.max_bytes = max_bytes
         self.nrows = nrows
         self.ncols = ncols
@@ -152,6 +142,28 @@ class Level:
         self.white_buttons = white_buttons
         self.walls = walls
         self.inaccessible_spots = inaccessible_spots
+
+
+def _readint(file, size, pattern, lo, hi, row, newline=False):
+    line = file.readline(size)
+    error = ValueError('expected a positive integer in the range [%d, %d) at line %d: %s' % (lo, hi, row, line))
+
+    if line.endswith('\n'):
+        line = line[:-1]
+    elif newline:
+        raise error
+
+    match = pattern.fullmatch(line)
+
+    if match:
+        result = int(line)
+
+        if result < lo or result >= hi:
+            raise error
+
+        return result
+
+    raise error
 
 
 def _extend_horizontally(grid, hseen, row, col, nrows, ncols):
@@ -270,6 +282,7 @@ class RuntimeEnvironment:
         self.robot = robot
         self.gray_buttons = gray_buttons
         self.white_buttons = white_buttons
+        self.total_buttons = len(white_buttons)
         self.npressed = 0       # the number of white buttons pressed
         self.max_npressed = 0   # the maximum number of white buttons pressed
         self.completed = False  # True iff all the white buttons have been pressed
@@ -290,7 +303,7 @@ class RuntimeEnvironment:
                     if self.npressed > self.max_npressed:
                         self.max_npressed = self.npressed
 
-                    if not self.completed and self.white_buttons and self.npressed == len(self.white_buttons):
+                    if not self.completed and self.white_buttons and self.npressed == self.total_buttons:
                         self.completed = True
         elif command == 'l':
             self.robot.turn_left()
@@ -298,3 +311,34 @@ class RuntimeEnvironment:
             self.robot.turn_right()
         else:
             raise ValueError('not a command: %s' % command)
+
+    def score(self, bytes):
+        return calculate_score(self.level.points, self.level.max_bytes, self.total_buttons, self.npressed, bytes)
+
+
+def calculate_score(points, max_bytes, total_buttons, buttons, bytes):
+    """Calculates the score for a level.
+
+    points: the points assigned for solving the level (based on difficulty)
+    max_bytes: the maximum number of bytes for the level
+    total_buttons: the number of white buttons on the level
+    buttons: the number of white buttons pressed
+    bytes: the number of bytes actually used
+    """
+
+    if buttons == total_buttons and bytes <= max_bytes:
+        # level solved
+        return (points * max_bytes) // bytes
+
+    # level unsolved
+    assert buttons < total_buttons or bytes > max_bytes
+
+    points_per_button = 0
+
+    if bytes <= max_bytes:
+        points_per_button = points // (2 * total_buttons)
+
+    if max_bytes < bytes <= 2*max_bytes:
+        points_per_button = points * (2*max_bytes - bytes) // (2 * max_bytes * total_buttons)
+
+    return buttons * points_per_button
