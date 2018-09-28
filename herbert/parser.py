@@ -44,6 +44,6 @@ parser = Lark(GRAMMAR, parser='lalr', start='h')
 
 def parse(text):
     try:
-        return parser.parse(text)
+        return parser.parse(text.strip())
     except (LexError, ParseError) as e:
         raise SyntaxError from e

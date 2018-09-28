@@ -315,6 +315,25 @@ class RuntimeEnvironment:
     def score(self, bytes):
         return calculate_score(self.level.points, self.level.max_bytes, self.total_buttons, self.npressed, bytes)
 
+    def grid(self):
+        new_grid = []
+
+        for r, row in enumerate(self.level.grid):
+            new_row = []
+            for c, ch in enumerate(row):
+                if ch in ROBOT_DIRECTIONS or ch == WHITE_BUTTON:
+                    new_row.append(EMPTY)
+                else:
+                    new_row.append(ch)
+            new_grid.append(new_row)
+
+        for (r, c), white_button in self.white_buttons.items():
+            new_grid[r][c] = 'b' if white_button.pressed else 'w'
+
+        new_grid[self.robot.row][self.robot.col] = ROBOT_DIRECTIONS[self.robot.heading]
+
+        return new_grid
+
 
 def calculate_score(points, max_bytes, total_buttons, buttons, bytes):
     """Calculates the score for a level.
