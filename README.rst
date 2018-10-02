@@ -12,7 +12,7 @@ those patterns.
 
 Here's my clone of Herbert.
 
-.. image:: https://github.com/dwayne/herbert-python/blob/master/data/images/herbert.png
+.. image:: https://raw.githubusercontent.com/dwayne/herbert-python/master/data/images/herbert.png
 
 Enjoy!
 

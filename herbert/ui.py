@@ -266,7 +266,7 @@ class Title(Window):
         super().__init__(0, 0, curses.COLS, 1)
 
     def draw(self):
-        self.add_string(1, 0, '%s %s' % (constants.PROGRAM_NAME, constants.VERSION))
+        self.add_string(1, 0, '%s' % constants.PROGRAM_NAME)
         super().draw()
 
 
