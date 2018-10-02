@@ -5,9 +5,13 @@ name = "pypi"
 
 [packages]
 lark-parser = "*"
+"e1839a8" = {editable = true, path = "."}
 
 [dev-packages]
 ipython = "*"
+setuptools = "*"
+wheel = "*"
+twine = "*"
 
 [requires]
 python_version = "3.7"
