@@ -54,7 +54,7 @@ is facing upwards, :code:`r` means the robot is facing towards the right,
 :code:`d` means the robot is facing downwards, or :code:`l` means the robot is
 facing towards the left).
 
-**N.B.** You can find an example level `here <https://github.com/dwayne/herbert-python/blob/master/data/example/level3.txt>`_.
+**N.B.** You can find an example level `here <https://github.com/dwayne/herbert-python/blob/master/data/example/level3.txt>`__.
 
 On each level there are some white buttons. To solve a level you must press all
 the white buttons. Your goal then is to program Herbert, in a language called
@@ -72,12 +72,12 @@ allotted maximum number of bytes.
 **The "h" language**
 
 It is a simple language that contains statements, procedures with zero or more
-parameters and recursion. Check out the tutorial `here <https://github.com/dwayne/herbert-python/blob/master/data/resources/Tutorial.aspx.html>`_
+parameters and recursion. Check out the tutorial `here <https://github.com/dwayne/herbert-python/blob/master/data/resources/Tutorial.aspx.html>`__
 to get a better understanding of the language.
 
-You can find examples of the language in use `here <https://github.com/dwayne/herbert-python/blob/master/data/example/sol3a.h>`_,
-`here <https://github.com/dwayne/herbert-python/blob/master/data/example/sol3b.h>`_
-and `here <https://github.com/dwayne/herbert-python/blob/master/data/example/sol3c.h>`_.
+You can find examples of the language in use `here <https://github.com/dwayne/herbert-python/blob/master/data/example/sol3a.h>`__,
+`here <https://github.com/dwayne/herbert-python/blob/master/data/example/sol3b.h>`__
+and `here <https://github.com/dwayne/herbert-python/blob/master/data/example/sol3c.h>`__.
 
 **Challenge**
 

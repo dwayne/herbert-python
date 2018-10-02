@@ -12,6 +12,7 @@ ipython = "*"
 setuptools = "*"
 wheel = "*"
 twine = "*"
+"collective.checkdocs" = "*"
 
 [requires]
 python_version = "3.7"
